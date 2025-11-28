@@ -1,0 +1,37 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.2
+    hooks:
+      # Run the linter.
+      - id: ruff-check
+        args: [ --fix, --show-fixes]
+      # Run the formatter.
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v1.16.1'
+    hooks:
+    -   id: mypy
+        args: [--strict, --ignore-missing-imports, --install-types, --non-interactive]
+        additional_dependencies:
+          - pydantic>=2.0.0
+          - pydantic-settings>=2.0.0
+
+  - repo: https://github.com/jendrikseipp/vulture
+    rev: 'v2.3'
+    hooks:
+      - id: vulture
+        args: [bioscopeai_vision_streamer/]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+        args: [-m]
+      - id: check-added-large-files
+      - id: check-merge-conflict
+
+default_language_version:
+  python: python3.13
