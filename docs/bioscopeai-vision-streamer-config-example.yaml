@@ -1,0 +1,23 @@
+app:
+  DEBUG: true
+  LOG_LEVEL: "debug"
+  LOG_FILE_LEVEL: "debug"
+  LOG_FILE_PATH: ""
+  PROJECT_NAME: "BioScopeAI Core"
+  PROJECT_VERSION: "0.0.1"
+  BACKEND_CORS_ORIGINS: ""
+  UVICORN_ADDRESS: "0.0.0.0"
+  UVICORN_PORT: 8000
+
+sentry:
+  SENTRY_DSN: ""
+
+auth:
+  ACCESS_TOKEN_TTL_MINUTES: 15  # 15 minutes
+  REFRESH_TOKEN_TTL_MINUTES: 10080  # 7 days
+  PUBLIC_KEY: |
+    -----BEGIN PUBLIC KEY-----
+    -----END PUBLIC KEY-----
+  PRIVATE_KEY: |
+    -----BEGIN PRIVATE KEY-----
+    -----END PRIVATE KEY-----
