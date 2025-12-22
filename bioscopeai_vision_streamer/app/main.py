@@ -9,6 +9,7 @@ from starlette.types import Lifespan
 
 from bioscopeai_vision_streamer.app.api import api_router
 from bioscopeai_vision_streamer.app.core import settings, setup_logger
+from bioscopeai_vision_streamer.app.webrtc.rtc_manager import rtc_manager
 
 
 def create_app(lifespan: Lifespan) -> FastAPI:
@@ -36,12 +37,14 @@ def create_app(lifespan: Lifespan) -> FastAPI:
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
+async def lifespan(_app: FastAPI) -> AsyncGenerator[None]:
     """Lifespan context manager for startup and shutdown events."""
     setup_logger()
     logger.info("Application startup complete.")
     yield
     logger.info("Shutting down application...")
+    await rtc_manager.close_all()
+    logger.info("All WebRTC connections closed.")
 
 
 app: FastAPI = create_app(lifespan=lifespan)
