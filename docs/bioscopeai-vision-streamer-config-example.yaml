@@ -3,7 +3,7 @@ app:
   LOG_LEVEL: "debug"
   LOG_FILE_LEVEL: "debug"
   LOG_FILE_PATH: ""
-  PROJECT_NAME: "BioScopeAI Core"
+  PROJECT_NAME: "BioScopeAI Vision Streamer"
   PROJECT_VERSION: "0.0.1"
   BACKEND_CORS_ORIGINS: ""
   UVICORN_ADDRESS: "0.0.0.0"

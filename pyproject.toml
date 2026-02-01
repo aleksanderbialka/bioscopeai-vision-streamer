@@ -89,14 +89,14 @@ implicit_reexport = true
 
 # ######################## pytest configuration ########################
 [tool.coverage.run]
-source = ["bioscopeai_core"]
+source = ["bioscopeai_vision_streamer"]
 omit = ["*/tests/*", "*/__init__.py"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
 python_files = "tests.py test_*.py *_tests.py"
 python_functions = "test_*"
-addopts = "--cov=apps --cov-report=html --cov-report=term-missing"
+addopts = "--cov=bioscopeai_vision_streamer --cov-report=html --cov-report=term-missing"
 
 
 # ################ ################ ruff configuration #################
