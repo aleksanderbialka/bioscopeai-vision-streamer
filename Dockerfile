@@ -38,7 +38,7 @@ COPY ./pyproject.toml ./poetry.lock ./README.md /var/www/bioscopeai-vision-strea
 COPY ./bioscopeai_vision_streamer /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/bioscopeai_vision_streamer
 COPY ./docs /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/docs
 COPY ./scripts /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/scripts
-RUN chmod +x /var/www/bioscopeai-core/app/bioscopeai-core/scripts/*.sh
+RUN chmod +x /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/scripts/*.sh
 RUN ls -la /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/*
 
 WORKDIR /var/www/bioscopeai-vision-streamer/app/
