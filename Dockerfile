@@ -37,6 +37,8 @@ RUN python3 -m venv /var/www/bioscopeai-vision-streamer/app/bioscopeai_vision_st
 COPY ./pyproject.toml ./poetry.lock ./README.md /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/
 COPY ./bioscopeai_vision_streamer /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/bioscopeai_vision_streamer
 COPY ./docs /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/docs
+COPY ./scripts /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/scripts
+RUN chmod +x /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/scripts/*.sh
 RUN ls -la /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/*
 
 WORKDIR /var/www/bioscopeai-vision-streamer/app/

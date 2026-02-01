@@ -1,0 +1,139 @@
+name: BioscopeAI Vision Streamer CI/CD -- MAIN workflow 🧪
+run-name: ${{ github.event.head_commit.message }} -- ${{ github.actor}} 🦁
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_image:
+        description: "Build image?"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+  push:
+    branches: ["master", "dev"]
+
+permissions:
+  checks: write
+  contents: read
+  packages: write
+
+jobs:
+  lint:
+    name: Lint with Ruff 🧹
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install Poetry 📘
+        run: pip install poetry==2.2.1
+
+      - name: Install dependencies for linting
+        working-directory: .
+        run: poetry install --only dev
+
+      - name: Run Ruff
+        working-directory: .
+        run: poetry run ruff check .
+
+  build-and-tests:
+    name: Build for test and push to GHCR 🐳
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+
+      - name: Set Tag to Docker Image 📦
+        run: |
+          echo "IMAGE_NAME=${{ vars.IMAGE_NAME }}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${{ github.ref_name }}" >> $GITHUB_ENV
+          echo "FULL_IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}:${{ github.ref_name }}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx 🛠️
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create Docker network
+        run: docker network create gha-network
+
+      - name: Start Postgres
+        run: |
+          docker run -d \
+            --name postgres \
+            --network gha-network \
+            -e POSTGRES_DB=postgres \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=password \
+            -p 5432:5432 \
+            postgres:15
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            docker exec postgres pg_isready -U postgres && break
+            sleep 1
+          done
+
+      - name:  Build Docker image 🐳
+        run: docker build -t $IMAGE_NAME:$IMAGE_TAG -f ./Dockerfile .
+
+      - name: Launch Docker container and run tests 🧪
+        run: |
+          docker run --rm \
+            --network gha-network \
+            -e SECRET_KEY=testsecret \
+            -e DEBUG=False \
+            -e POSTGRES_DB=postgres \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=password \
+            -e POSTGRES_HOST=postgres \
+            -e POSTGRES_PORT=5432 \
+            -v ${{ github.workspace }}/results:/var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/results \
+            -v ${{ github.workspace }}/htmlcov:/var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/htmlcov \
+            $IMAGE_NAME:$IMAGE_TAG \
+            /var/www/bioscopeai-vision-streamer/app/bioscopeai-vision-streamer/scripts/run_tests.sh
+
+      - name: Publish test report in GitHub UI
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+              name: Pytest Test Results
+              path: results/pytest-results.xml
+              reporter: java-junit
+
+      - name: Upload Coverage HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html-report
+          path: htmlcov
+
+      - name: Upload HTML test report 📄
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-html-report
+          path: results/pytest-report.html
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Docker image to GHCR 🐳
+        if: github.event.inputs.build_image != 'false'
+        run: |
+          docker tag $IMAGE_NAME:$IMAGE_TAG $FULL_IMAGE_NAME
+          docker push $FULL_IMAGE_NAME

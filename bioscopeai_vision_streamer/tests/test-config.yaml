@@ -2,10 +2,10 @@ app:
   DEBUG: true
   LOG_LEVEL: "debug"
   LOG_FILE_LEVEL: "debug"
-  LOG_FILE_PATH: ""
+  LOG_FILE_PATH: "/tmp/test.log"
   PROJECT_NAME: "BioScopeAI Vision Streamer"
   PROJECT_VERSION: "0.0.1"
-  BACKEND_CORS_ORIGINS: ""
+  BACKEND_CORS_ORIGINS: "http://localhost:3000"
   UVICORN_ADDRESS: "0.0.0.0"
   UVICORN_PORT: 8000
 
@@ -13,8 +13,8 @@ sentry:
   SENTRY_DSN: ""
 
 auth:
-  ACCESS_TOKEN_TTL_MINUTES: 15  # 15 minutes
-  REFRESH_TOKEN_TTL_MINUTES: 10080  # 7 days
+  ACCESS_TOKEN_TTL_MINUTES: 15
+  REFRESH_TOKEN_TTL_MINUTES: 10080
   PUBLIC_KEY: |
     -----BEGIN PUBLIC KEY-----
     -----END PUBLIC KEY-----

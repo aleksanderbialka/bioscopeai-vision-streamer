@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Any
 
@@ -10,6 +11,10 @@ ROOT_DIR = Path(__file__).parent.parent.parent.parent
 
 
 def _get_yaml_path() -> str:
+    # Support CONFIG_FILE env var for testing
+    if config_file := os.environ.get("CONFIG_FILE"):
+        return config_file
+
     config_path = Path("/etc/bioscopeai-vision-streamer-config.yaml")
     if not config_path.exists():
         config_path = ROOT_DIR / "docs/bioscopeai-vision-streamer-config.yaml"
