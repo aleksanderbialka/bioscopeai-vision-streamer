@@ -1,6 +1,8 @@
 """Pytest configuration and shared fixtures."""
 
+import os
 from collections.abc import AsyncGenerator, Generator
+from pathlib import Path
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
@@ -10,6 +12,15 @@ from fastapi.testclient import TestClient
 from httpx import AsyncClient
 
 from bioscopeai_vision_streamer.app.main import create_app
+
+
+def pytest_configure() -> None:
+    """Setup test environment before Pydantic Settings initialization."""
+    test_config_path = Path(__file__).parent / "test-config.yaml"
+    os.environ["CONFIG_FILE"] = str(test_config_path)
+    print(
+        f"\n[pytest] CONFIG_FILE: {test_config_path} (exists: {test_config_path.exists()})"
+    )
 
 
 @pytest.fixture(scope="session")

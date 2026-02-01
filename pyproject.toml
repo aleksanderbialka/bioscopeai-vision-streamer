@@ -82,7 +82,7 @@ warn_redundant_casts = true
 disable_error_code = ["misc"]
 
 [[tool.mypy.overrides]]
-module = ["tests"]
+module = ["tests.*"]
 ignore_errors = true
 implicit_reexport = true
 
@@ -101,7 +101,7 @@ addopts = "--cov=bioscopeai_vision_streamer --cov-report=html --cov-report=term-
 
 # ################ ################ ruff configuration #################
 [tool.ruff]
-extend-exclude = ["__pycache__"]
+extend-exclude = ["__pycache__", "bioscopeai_vision_streamer/tests/*"]
 force-exclude = true
 namespace-packages = ["bioscopeai_vision_streamer"]
 required-version = ">=0.14.2"
